@@ -21,7 +21,7 @@ bot_token = ""
 
 #Initialize database
 def get_started():
-    db = peewee.SqliteDatabase('eurobot.db')
+    db = peewee.SqliteDatabase('overwasher.db')
     models = [
         obj for name, obj in inspect.getmembers(
             handlers, lambda obj: inspect.isclass(obj) and issubclass(obj, peewee.Model) and obj != peewee.Model 

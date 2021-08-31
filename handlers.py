@@ -10,6 +10,10 @@ import time
 import tempfile
 from pprint import pprint
 from peewee import *
+import requests
+import time
+import click
+from datetime import datetime
 
 
 #************************************
@@ -17,7 +21,7 @@ from peewee import *
 #************************************
 loop = asyncio.get_event_loop()
 
-db = SqliteDatabase('eurobot.db')
+db = SqliteDatabase('overwasher.db')
 
 
 num = 3
@@ -30,7 +34,6 @@ kb = [[telegram.KeyboardButton('ВСЁ!')]]
 kb_markup = telegram.ReplyKeyboardMarkup(kb)
 
 attachment_id = 0
-
 
 
 #************************************
@@ -117,8 +120,12 @@ class Project(Model):
 #      Administrators module
 #************************************
 
+#************************************
+#        Exceptions module
+#************************************
 
-
+class BadResponse(Exception):
+    pass
 
 #....................................
 #     Helpers submodule                                  
@@ -131,11 +138,45 @@ def safe_list_get (l, idx, default):
     return default
 
 def get_data_from_backend():
-    return ""
+    while True:
+        try:
+            response = requests.get('https://api.github.com', timeout=5)
+            # If the response was successful, no Exception will be raised
+            response.raise_for_status()
+            if not response.status_code == 200
+                raise BadResponse(response.status_code)
+        except HTTPError as http_err:
+            logging.exception(http_err)
+            time.sleep(2)
+            continue
+        except requests.exceptions.RequestException as err:
+            logging.exception(err)
+            raise err
+        except BadResponse as err:
+            logging.exception(err)
+            raise err
+
+        return response.json()
+
+
     
 def form_message():
-    get_data_from_backend()
-    return ""
+    resp = get_data_from_backend()
+    message = f"All known washing machines:\n"
+    for sensor_node in resp:
+        t =datetime.utcfromtimestamp(sensor_node["lastContact"]).strftime('%Y-%m-%d %H:%M:%S')
+        state = sensor_node["state"]
+        emoji_state = ""
+        if state == "unknown":
+            emoji_state = "❔" #white question mark
+        elif state == "busy":
+            emoji_state = "🛑"
+        elif state == "free":
+            emoji_state = "🟢"
+        else:
+            emoji_state = ""
+        message += f"{sensor_node["location"]} is {state}{emoji_state}\nLast updated:{t}\n"
+    return message
 
 #************************************
 #         User module
@@ -158,7 +199,7 @@ def machinestatus_handler(update, context):
     print(f"\n\n\n\n\n{update.message}\n\n\n")
     if (update.message.text == "📊Status"):
         message = form_message()
-        send_message(chat_id=chat_id, text = "NotYetImplementedException")
+        send_message(chat_id=chat_id, text = message)
     else:
         update.message.reply_text("What is das?")
 
