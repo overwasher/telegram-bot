@@ -120,6 +120,12 @@ class Project(Model):
 #      Administrators module
 #************************************
 
+def notify_admins(message):
+    chat_id_vy=314645303
+    chat_id_dc=379529027
+    send_message(chat_id=chat_id_vy, text = "SOMETHING BROKE. AGAIN. FIX THIS SHIT")
+    send_message(chat_id=chat_id_dc, text = "DID YOU BREAK API AGAIN? STOP IT!")
+
 #************************************
 #        Exceptions module
 #************************************
@@ -140,10 +146,10 @@ def safe_list_get (l, idx, default):
 def get_data_from_backend():
     while True:
         try:
-            response = requests.get('https://api.github.com', timeout=5)
+            response = requests.get('https://overwatcher.ow.dcnick3.me/status/v1', timeout=5)
             # If the response was successful, no Exception will be raised
             response.raise_for_status()
-            if not response.status_code == 200
+            if not response.status_code == 200:
                 raise BadResponse(response.status_code)
         except HTTPError as http_err:
             logging.exception(http_err)
@@ -155,27 +161,56 @@ def get_data_from_backend():
         except BadResponse as err:
             logging.exception(err)
             raise err
-
+        print(click.style(response.json(), fg="yellow"))
         return response.json()
 
 
     
 def form_message():
     resp = get_data_from_backend()
-    message = f"All known washing machines:\n"
-    for sensor_node in resp:
-        t =datetime.utcfromtimestamp(sensor_node["lastContact"]).strftime('%Y-%m-%d %H:%M:%S')
-        state = sensor_node["state"]
-        emoji_state = ""
-        if state == "unknown":
-            emoji_state = "❔" #white question mark
-        elif state == "busy":
-            emoji_state = "🛑"
-        elif state == "free":
-            emoji_state = "🟢"
-        else:
+    message = f"All known machines:\n"
+    machines = ""
+    try:
+        for sensor_node in resp:
+            print(click.style(sensor_node, fg="red"))
+            t =datetime.utcfromtimestamp(sensor_node["lastContact"]//1000).strftime('%Y-%m-%d %H:%M:%S')
+            state = sensor_node["state"]
+
+            try:
+                location = sensor_node["id"]
+                type_ = ""
+                if "wash" in location:
+                    type_ = "Washer"
+                elif "dry" in location:
+                    type_ = "Dryer"
+                else:
+                    raise ValueError("Uknown type enountered")
+                location = re.findall(r'\d+', location)
+                print(click.style(location, fg="red"))
+                location = f"Dorm {location[0]}, Floor {location[1]}, {type_} {location[3]}"
+            except (IndexError, ValueError, Exception) as err:
+                logging.exception(err)
+                continue
+
             emoji_state = ""
-        message += f"{sensor_node["location"]} is {state}{emoji_state}\nLast updated:{t}\n"
+            if state == "unknown":
+                emoji_state = "❔" #white question mark
+            elif state == "busy":
+                emoji_state = "🛑"
+            elif state == "free":
+                emoji_state = "🟢"
+            else:
+                emoji_state = ""
+
+            machines += f"{location} is {state}{emoji_state}\nLast updated:{t}\n"
+    except (IndexError, ValueError, Exception) as err:
+        message = "Sorry, we are having Backend Issues today\nAdmins will be notified and probably will fix it.."
+        logging.exception(err)
+        notify_admins(err)
+
+    if machines == "":
+        message = "We do not know anything about machines now.."
+
     return message
 
 #************************************
