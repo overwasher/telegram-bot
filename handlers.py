@@ -14,7 +14,7 @@ import requests
 import time
 import click
 from datetime import datetime
-
+import timeago
 
 #************************************
 #     Global variables module
@@ -122,9 +122,9 @@ class Project(Model):
 
 def notify_admins(message):
     chat_id_vy=314645303
-    chat_id_dc=379529027
+    #chat_id_dc=379529027
     send_message(chat_id=chat_id_vy, text = "SOMETHING BROKE. AGAIN. FIX THIS SHIT")
-    send_message(chat_id=chat_id_dc, text = "DID YOU BREAK API AGAIN? STOP IT!")
+    #send_message(chat_id=chat_id_dc, text = "DID YOU BREAK API AGAIN? STOP IT!")
 
 #************************************
 #        Exceptions module
@@ -168,13 +168,17 @@ def get_data_from_backend():
     
 def form_message():
     resp = get_data_from_backend()
-    message = f"All known machines:\n"
+    message = f"All known machines:\n\n"
     machines = ""
+
     try:
         for sensor_node in resp:
             print(click.style(sensor_node, fg="red"))
+
             t =datetime.utcfromtimestamp(sensor_node["lastContact"]//1000).strftime('%Y-%m-%d %H:%M:%S')
             state = sensor_node["state"]
+            state = state.replace("inactive", "free")
+            state = state.replace("active", "busy")
 
             try:
                 location = sensor_node["id"]
@@ -187,7 +191,7 @@ def form_message():
                     raise ValueError("Uknown type enountered")
                 location = re.findall(r'\d+', location)
                 print(click.style(location, fg="red"))
-                location = f"Dorm {location[0]}, Floor {location[1]}, {type_} {location[3]}"
+                location = f"Dorm {location[0]}, Floor {location[1]}, {type_} {location[2]}"
             except (IndexError, ValueError, Exception) as err:
                 logging.exception(err)
                 continue
@@ -202,14 +206,18 @@ def form_message():
             else:
                 emoji_state = ""
 
-            machines += f"{location} is {state}{emoji_state}\nLast updated:{t}\n"
+            machines += f"{location} is {state}{emoji_state}\nLast updated: {timeago.format(t, datetime.utcnow())}\n\n"
     except (IndexError, ValueError, Exception) as err:
         message = "Sorry, we are having Backend Issues today\nAdmins will be notified and probably will fix it.."
+        machines = ""
         logging.exception(err)
         notify_admins(err)
 
+    print(click.style(machines, fg="red"))
     if machines == "":
         message = "We do not know anything about machines now.."
+    else:
+        message+=machines
 
     return message
 
@@ -222,7 +230,7 @@ def start_handler(update, context):
     alias = update.effective_user.username #get persons username from telegram
     chat_id=update.message.chat_id
 
-    keyboard = telegram.ReplyKeyboardMarkup([["📊Status", "Cancel"]])
+    keyboard = telegram.ReplyKeyboardMarkup([["📊Status", "❌Cancel"]])
 
     send_message(chat_id=chat_id, text="Hello!\n I am overwasher bot \n I will help you get status of washing and drying mashines")
     send_message(chat_id=chat_id, text="P.S. Currently only a few washing mashines are supported!", reply_markup = keyboard)
@@ -232,9 +240,13 @@ def machinestatus_handler(update, context):
     alias = update.effective_user.username #get persons username from telegram
     chat_id=update.message.chat_id
     print(f"\n\n\n\n\n{update.message}\n\n\n")
-    if (update.message.text == "📊Status"):
+    text = update.message.text.lower()
+    if (text == "📊status") or (text == "status"):
         message = form_message()
         send_message(chat_id=chat_id, text = message)
+    elif (text == "❌cancel") or (text == "cancel"):
+        keyboard = telegram.ReplyKeyboardRemove()
+        send_message(chat_id=chat_id, text="Alrighty. Be sure to say /start when you want to chat next time", reply_markup = keyboard)
     else:
         update.message.reply_text("What is das?")
 
