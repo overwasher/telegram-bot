@@ -1,0 +1,15 @@
+version: "3.9"  
+services:
+  overwasher_telegram_bot:
+    restart: always
+    build: .
+    volumes:
+      - overwasher_telegram_bot_volume:/data
+    secrets:
+      - config.json
+secrets:
+  config.json:
+    file: ./secrets/config.json
+volumes:
+  overwasher_telegram_bot_volume: {}
+

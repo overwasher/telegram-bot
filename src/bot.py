@@ -6,7 +6,9 @@ from concurrent.futures import ThreadPoolExecutor
 import handlers
 import inspect
 import peewee
-
+import json
+import click
+import sys
 
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -15,13 +17,19 @@ loop = asyncio.get_event_loop()
 
 num = 3
 
-bot_token = ""
+config = {}
+with open("/run/secrets/config.json", "r") as f:
+    config = json.load(f)
 
+bot_token = config["bot-token"]
 
+if bot_token == "":
+    print(click.style("Bot token is empty, make sure that you have set it in ./secrets/config.json",fg="red"))
+    sys.exit()
 
 #Initialize database
 def get_started():
-    db = peewee.SqliteDatabase('overwasher.db')
+    db = peewee.SqliteDatabase('../data/overwasher.db')
     models = [
         obj for name, obj in inspect.getmembers(
             handlers, lambda obj: inspect.isclass(obj) and issubclass(obj, peewee.Model) and obj != peewee.Model 

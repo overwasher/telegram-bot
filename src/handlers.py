@@ -21,11 +21,19 @@ import timeago
 #************************************
 loop = asyncio.get_event_loop()
 
-db = SqliteDatabase('overwasher.db')
+db = SqliteDatabase('../data/overwasher.db')
 
 
 num = 3
-bot_token = ""
+config = {}
+with open("/run/secrets/config.json", "r") as f:
+    config = json.load(f)
+
+bot_token = config["bot-token"]
+
+if bot_token == "":
+    print(click.style("Bot token is empty, make sure that you have set it in ./secrets/config.json",fg="red"))
+    sys.exit()
 bot = telegram.Bot(token=bot_token)
 
 

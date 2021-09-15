@@ -1,0 +1,5 @@
+timeago==1.0.15
+requests==2.26.0
+peewee==3.14.4
+python_telegram_bot==13.7
+click==8.0.1
