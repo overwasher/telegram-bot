@@ -21,27 +21,22 @@ import timeago
 #************************************
 loop = asyncio.get_event_loop()
 
-db = SqliteDatabase('../data/overwasher.db')
+# WE do not yet require a database
+#db = SqliteDatabase('../data/overwasher.db')
 
 
-num = 3
+#Load configuration with secrets
 config = {}
 with open("/run/secrets/config.json", "r") as f:
     config = json.load(f)
 
 bot_token = config["bot-token"]
 
+#Make sure to print an error if bot token is empty
 if bot_token == "":
     print(click.style("Bot token is empty, make sure that you have set it in ./secrets/config.json",fg="red"))
     sys.exit()
 bot = telegram.Bot(token=bot_token)
-
-
-kb = [[telegram.KeyboardButton('ВСЁ!')]]
-
-kb_markup = telegram.ReplyKeyboardMarkup(kb)
-
-attachment_id = 0
 
 
 #************************************
@@ -98,41 +93,32 @@ def send_document(**kwargs):
     __send_something(bot.send_document, **kwargs)
         
 
-#************************************
-#          Regexp module
-#************************************
-
-def matches_string(regex, string):
-    m = re.search(regex, string)
-    if (m == None):
-        return False
-    return m.span()[0]==0 and m.span()[1]==len(string)
-
-
 
 #************************************
-#         ORM definitions module
+#       ORM definitions module
 #************************************
+#Unused code from peewee ORM
 
-class Project(Model):
-    id = IntegerField(unique = True, primary_key = True)
-    name = CharField(unique = True)
-    password = CharField(default = "")
-    user_password = CharField(default = "") #TODO add user passwords so that not everyone can enroll
-    
-    class Meta:
-        database = db
+#class Project(Model):
+#    id = IntegerField(unique = True, primary_key = True)
+#    name = CharField(unique = True)
+#    password = CharField(default = "")
+#    user_password = CharField(default = "") #TODO add user passwords so that not everyone can enroll
+#
+#    class Meta:
+#        database = db
 
 
 #************************************
 #      Administrators module
 #************************************
 
+#Notify @unb0und @DCNick3 that some Exception occured
 def notify_admins(message):
     chat_id_vy=314645303
-    #chat_id_dc=379529027
+    chat_id_dc=379529027
     send_message(chat_id=chat_id_vy, text = "SOMETHING BROKE. AGAIN. FIX THIS SHIT")
-    #send_message(chat_id=chat_id_dc, text = "DID YOU BREAK API AGAIN? STOP IT!")
+    send_message(chat_id=chat_id_dc, text = "DID YOU BREAK API AGAIN? STOP IT!")
 
 #************************************
 #        Exceptions module
@@ -173,7 +159,11 @@ def get_data_from_backend():
         return response.json()
 
 
-    
+#************************************
+#       Business logic module
+#************************************
+
+#Forms message after fetching API data
 def form_message():
     resp = get_data_from_backend()
     message = f"All known machines:\n\n"
