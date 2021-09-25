@@ -17,6 +17,8 @@ Currently it is very simple and just wraps data in fancy text and emojis.
 
 Bot is written using python3 and [python-telegram-bot](https://github.com/python-telegram-bot/python-telegram-bot) framework. 
 
+Note: little to no OOP approaches are used in this component as it is common for telegram bots
+
 ### Setup
 
 *Disclaimer: project is in its early stages. Much may change relatively soon. Stability is not guaranteed.*
