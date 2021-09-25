@@ -27,21 +27,6 @@ if bot_token == "":
     print(click.style("Bot token is empty, make sure that you have set it in ./secrets/config.json",fg="red"))
     sys.exit()
 
-#Initialize database
-#Even though this piece is unused now, we may need a database later and therefore this piece should better exist for now
-
-#def get_started():
-#    db = peewee.SqliteDatabase('../data/overwasher.db')
-#    models = [
-#        obj for name, obj in inspect.getmembers(
-#            handlers, lambda obj: inspect.isclass(obj) and issubclass(obj, peewee.Model) and obj != peewee.Model
-#        )
-#    ]
-#    print(models)
-#    db.create_tables(models)
-
-#get_started()
-
 updater = Updater(token=bot_token, use_context=True)
 dispatcher = updater.dispatcher
 
