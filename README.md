@@ -4,7 +4,7 @@
 
 ### Description
 
-This component of Overwasher project provides a user-facing interface for the Overwatcher API.
+This component of Overwasher project provides a user-facing interface.
 
 Currently it is very simple and just wraps data in fancy text and emojis.
 
