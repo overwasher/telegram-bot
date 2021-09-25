@@ -6,7 +6,7 @@
 
 This component of Overwasher project provides a user-facing interface for the Overwatcher API.
 
-Currently it is very simple and just wraps data in fancy text and emojis
+Currently it is very simple and just wraps data in fancy text and emojis.
 
 
 ### Demo
@@ -21,9 +21,9 @@ Bot is written using python3 and [python-telegram-bot](https://github.com/python
 
 *Disclaimer: project is in its early stages. Much may change relatively soon. Stability is not guaranteed.*
 
-If you are planning to host this bot yourself, you are better off using docker as updates and machine restarts will not affect this bot much. 
+If you are planning to host this bot yourself, you are better off using docker as updates and machine restarts will not affect bot installed this way too much.
 
-For development purposes an undockerised setup is faster
+For development purposes an undockerised setup is faster.
 
 #### Dockerised
 1. Clone repo `git clone https://github.com/overwasher/telegram-bot.git`
