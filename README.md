@@ -2,7 +2,7 @@
 
 # Overwasher: telegram-bot
 
-### Description
+## Description
 
 This component of Overwasher project provides a user-facing interface.
 
@@ -19,7 +19,7 @@ Bot is written using python3 and [python-telegram-bot](https://github.com/python
 
 Note: little to no OOP approaches are used in this component as it is common for telegram bots
 
-### Setup
+## Setup
 
 *Disclaimer: project is in its early stages. Much may change relatively soon. Stability is not guaranteed.*
 
@@ -27,14 +27,14 @@ If you are planning to host this bot yourself, you are better off using docker a
 
 For development purposes an undockerised setup is faster.
 
-#### Dockerised
+### Dockerised
 1. Clone repo `git clone https://github.com/overwasher/telegram-bot.git`
 2. Launch `cd telegram-bot` 
 3. Obtain bot token from [BotFather](https://core.telegram.org/bots#6-botfather) in telegram
 4. Write your token into `./secrets/config.json`
 5. Launch `sudo docker-compose up --build`
 
-#### Undockerised
+### Undockerised
 1. Clone repo `git clone https://github.com/overwasher/telegram-bot.git`
 2. Launch `cd telegram-bot` 
 3. Obtain bot token from [BotFather](https://core.telegram.org/bots#6-botfather) in telegram
@@ -42,7 +42,7 @@ For development purposes an undockerised setup is faster.
 5. Install all dependencies via `pip3 install -r requirements.txt`
 6. Run `python3 ./src/bot.py`
 
-### How to contribute
+## How to contribute
 
 Currently, the project is in heavy development and may change a lot in the nearest future. 
 
