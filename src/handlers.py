@@ -21,10 +21,6 @@ import timeago
 #************************************
 loop = asyncio.get_event_loop()
 
-# WE do not yet require a database
-#db = SqliteDatabase('../data/overwasher.db')
-
-
 #Load configuration with secrets
 config = {}
 with open("/run/secrets/config.json", "r") as f:
@@ -92,22 +88,6 @@ def send_document(**kwargs):
     global bot
     __send_something(bot.send_document, **kwargs)
         
-
-
-#************************************
-#       ORM definitions module
-#************************************
-#Unused code from peewee ORM
-
-#class Project(Model):
-#    id = IntegerField(unique = True, primary_key = True)
-#    name = CharField(unique = True)
-#    password = CharField(default = "")
-#    user_password = CharField(default = "") #TODO add user passwords so that not everyone can enroll
-#
-#    class Meta:
-#        database = db
-
 
 #************************************
 #      Administrators module
