@@ -13,11 +13,15 @@ Currently it is very simple and just wraps data in fancy text and emojis.
 
 ![Demo dialog](https://github.com/overwasher/telegram-bot/blob/main/Demo.png)
 
+Currently we host an instance of this bot at [@overwasher_bot](https://t.me/overwasher_bot)
+
+*Note: This bot gathers data from Innopolis dorms and is under development so it may be unavailable at some points in time*
+
 ### Development stack
 
 Bot is written using python3 and [python-telegram-bot](https://github.com/python-telegram-bot/python-telegram-bot) framework. 
 
-Note: little to no OOP approaches are used in this component as it is common for telegram bots
+*Note: little to no OOP approaches are used in this component as it is common for telegram bots*
 
 ## Setup
 
