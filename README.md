@@ -32,7 +32,9 @@ For development purposes an undockerised setup is faster.
 2. Launch `cd telegram-bot` 
 3. Obtain bot token from [BotFather](https://core.telegram.org/bots#6-botfather) in telegram
 4. Write your token into `./secrets/config.json`
-5. Launch `sudo docker-compose up --build`
+5. Launch `sudo docker-compose up --build -d`
+
+*Note*: if you run on docker on debian you may need to change version in `docker-compose.yml` to supported one like 3.3
 
 ### Undockerised
 1. Clone repo `git clone https://github.com/overwasher/telegram-bot.git`
