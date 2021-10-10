@@ -38,7 +38,7 @@ For development purposes an undockerised setup is faster.
 4. Write your token into `./secrets/config.json`
 5. Launch `sudo docker-compose up --build -d`
 
-*Note*: if you run on docker on debian you may need to change version in `docker-compose.yml` to supported one like 3.3
+*Note*: if you run docker on debian you may need to change version in `docker-compose.yml` to supported one like 3.3
 
 ### Undockerised
 1. Clone repo `git clone https://github.com/overwasher/telegram-bot.git`
