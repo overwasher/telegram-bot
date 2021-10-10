@@ -8,6 +8,8 @@ This component of Overwasher project provides a user-facing interface.
 
 Currently it is very simple and just wraps data in fancy text and emojis.
 
+Also, it now can notify the admins that something has broken.
+
 
 ### Demo
 
@@ -20,6 +22,8 @@ Currently we host an instance of this bot at [@overwasher_bot](https://t.me/over
 ### Development stack
 
 Bot is written using python3 and [python-telegram-bot](https://github.com/python-telegram-bot/python-telegram-bot) framework. 
+
+All of the dependecies can be found in `requirements.txt` file.
 
 *Note: little to no OOP approaches are used in this component as it is common for telegram bots*
 
