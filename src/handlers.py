@@ -15,6 +15,8 @@ import time
 import click
 from datetime import datetime
 import timeago
+import sys
+import traceback
 
 #************************************
 #     Global variables module
@@ -93,12 +95,25 @@ def send_document(**kwargs):
 #      Administrators module
 #************************************
 
-#Notify @unb0und @DCNick3 that some Exception occured
-def notify_admins(message):
+timeout_for_messaging = 0
+TIMEOUT = 300
+
+#Notify @unb0und @DCNick3 that something occured
+def notify_admins(message, is_about_bot=False, important=False):
+    nonlocal timeout_for_messaging
     chat_id_vy=314645303
     chat_id_dc=379529027
-    send_message(chat_id=chat_id_vy, text = "SOMETHING BROKE. AGAIN. FIX THIS SHIT")
-    send_message(chat_id=chat_id_dc, text = "DID YOU BREAK API AGAIN? STOP IT!")
+
+    if not important:
+        now_is = time.time()
+        if now_is - timeout_for_messaging < TIMEOUT:
+            return
+
+    timeout_for_messaging = now_is
+
+    send_message(chat_id=chat_id_vy, text = message)
+    if not is_about_bot:
+        send_message(chat_id=chat_id_dc, text = message)
 
 #************************************
 #        Exceptions module
@@ -177,19 +192,22 @@ def form_message():
             emoji_state = ""
             if state == "unknown":
                 emoji_state = "❔" #white question mark
+                notify_admins(f"State of {location} updated {timeago.format(t, datetime.utcnow())} is unknown, better check it")
             elif state == "busy":
-                emoji_state = "🛑"
+                emoji_state = "🛑" #red rhombus
             elif state == "free":
-                emoji_state = "🟢"
+                emoji_state = "🟢"#green circle
             else:
                 emoji_state = ""
+                notify_admins("Ermm.. There is like a new status.. Is it an error?", is_about_bot=True)
+
 
             machines += f"{location} is {state}{emoji_state}\nLast updated: {timeago.format(t, datetime.utcnow())}\n\n"
     except (IndexError, ValueError, Exception) as err:
         message = "Sorry, we are having Backend Issues today\nAdmins will be notified and probably will fix it.."
         machines = ""
         logging.exception(err)
-        notify_admins(err)
+        notify_admins("Exception occured:" + traceback.format_exc(err), important=True)
 
     print(click.style(machines, fg="red"))
     if machines == "":
