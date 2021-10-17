@@ -4,11 +4,10 @@ import logging
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
 import handlers
-import inspect
-import peewee
 import json
 import click
 import sys
+import os
 
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -31,6 +30,7 @@ updater = Updater(token=bot_token, use_context=True)
 dispatcher = updater.dispatcher
 
 
+
 start_handler = CommandHandler('start', handlers.start_handler)
 dispatcher.add_handler(start_handler)
 
@@ -40,7 +40,16 @@ dispatcher.add_handler(machinestatus_handler)
 
 thread_pool_executor = ThreadPoolExecutor()
 
-loop.run_in_executor(thread_pool_executor,updater.start_polling)
+if config["debug"]:
+    loop.run_in_executor(thread_pool_executor,updater.start_polling)
+else:
+    if config["web_server"] == "":
+        print(click.style("debug = False, but web_server is not set, quitting",fg="red"))
+        sys.exit()
+    PORT = int(os.environ.get('PORT', '5000'))
+    updater.bot.setWebhook(config["web_server"] + bot_token)
+    loop.run_in_executor(thread_pool_executor,lambda: updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=bot_token))
+
 loop.run_forever()
 
 
